@@ -1,0 +1,46 @@
+<!-- templates/partials/problem_card.html -->
+<div class="problem-card">
+    <!-- Existing header -->
+    <div class="problem-header">
+        <h3>
+            <span class="leetcode-id">#{{ problem.leetcode_id }}</span>
+            {{ problem.title }}
+        </h3>
+        <span class="difficulty-badge {{ 'TBD' if not problem.comfort_level else problem.comfort_level.lower() }}">
+            {{ 'TBD' if not problem.comfort_level else COMFORT_LEVELS[problem.comfort_level].display }}
+        </span>
+
+    </div>
+
+    <!-- Topics section -->
+
+
+    <div class="topics">
+        <span class="metadata-label">Topics:</span>
+        {% for topic in problem.topics.split(',') %}
+            {% set curr_topic = topic.strip() %}
+            <a href="/?topic={{ curr_topic }}"
+               class="topic-tag {% if curr_topic == request.args.get('topic') %}selected{% endif %}">
+                {{ curr_topic }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- List management section -->
+    <div class="list-management">
+        <span class="metadata-label">Add to list:</span>
+        <div class="list-buttons">
+            {% for list in lists %}
+            <button
+                onclick="toggleList({{ problem.id }}, {{ list.slot }})"
+                class="list-toggle-btn {% if list.name in (problem.list_names or '').split(',') %}active{% endif %}"
+            >
+                {{ list.name }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Attempt form -->
+    {% include "partials/attempt_form.html" %}
+</div>

@@ -1,0 +1,32 @@
+# Create .gitignore
+echo "venv/
+__pycache__/
+*.pyc
+leetcode.db
+.DS_Store" > .gitignore
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+.venv
+ENV/
+
+# IDE files (in case you use these)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

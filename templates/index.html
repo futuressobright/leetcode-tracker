@@ -1,0 +1,73 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+{% if request.args.get('msg') %}
+    <div class="message">
+        {{ request.args.get('msg') }}
+    </div>
+{% endif %}
+
+<h1>LeetCode Tracker</h1>
+
+<form method="GET" class="search-form">
+    <input type="text"
+           name="search"
+           value="{{ search }}"
+           placeholder="Search problems..."
+           class="search-input">
+    <button type="submit" class="search-btn">Search</button>
+</form>
+
+
+<div class="list-buttons">
+    <a href="/"
+       class="list-button {% if not request.args.get('list') %}active{% endif %}"
+    >
+        All Problems
+    </a>
+    {% for list in lists %}
+        <div class="list-button-container">
+            <a href="/?list={{ list.slot }}"
+               class="list-button {% if list.slot|string == request.args.get('list') %}active{% endif %}"
+            >
+                {{ list.name }}
+            </a>
+            <button onclick="event.preventDefault(); renameList({{ list.slot }}, '{{ list.name }}')"
+                    class="edit-button"
+                    title="Rename list"
+                    aria-label="Rename list">
+                ✎
+            </button>
+        </div>
+    {% endfor %}
+</div>
+
+
+{% if topic %}
+    <h2>Topic: {{ topic }}</h2>
+{% endif %}
+
+{% if due_problems %}
+    <div class="collapsible-section">
+        <h2 class="collapsible-header" onclick="toggleSection('overdue')">
+            Overdue for Review
+            <span class="collapse-icon">▼</span>
+        </h2>
+        <div id="overdue" class="collapsible-content">
+            {% for problem in due_problems %}
+                {% include "partials/problem_card.html" %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <h2>All Problems</h2>
+{% endif %}
+
+
+{% for problem in all_problems %}
+    {% if not due_problems or problem.id not in due_problems|map(attribute='id')|list %}
+        {% include "partials/problem_card.html" %}
+    {% endif %}
+{% endfor %}
+{% endblock %}
