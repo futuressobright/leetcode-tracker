@@ -1,73 +1,60 @@
-<!-- templates/index.html -->
 {% extends "base.html" %}
 
 {% block content %}
-{% if request.args.get('msg') %}
-    <div class="message">
-        {{ request.args.get('msg') }}
-    </div>
-{% endif %}
-
-<h1>LeetCode Tracker</h1>
-
-<form method="GET" class="search-form">
-    <input type="text"
-           name="search"
-           value="{{ search }}"
-           placeholder="Search problems..."
-           class="search-input">
-    <button type="submit" class="search-btn">Search</button>
-</form>
-
-
-<div class="list-buttons">
-    <a href="/"
-       class="list-button {% if not request.args.get('list') %}active{% endif %}"
-    >
-        All Problems
-    </a>
-    {% for list in lists %}
-        <div class="list-button-container">
-            <a href="/?list={{ list.slot }}"
-               class="list-button {% if list.slot|string == request.args.get('list') %}active{% endif %}"
-            >
-                {{ list.name }}
-            </a>
-            <button onclick="event.preventDefault(); renameList({{ list.slot }}, '{{ list.name }}')"
-                    class="edit-button"
-                    title="Rename list"
-                    aria-label="Rename list">
-                ✎
-            </button>
+<div class="container">
+    {# Header and Search Section #}
+    <h1>LeetCode Tracker</h1>
+    <div class="top-nav">
+        {# Search Form #}
+        <div class="search-container">
+            <form method="GET">
+                <input type="text" name="search" value="{{ search }}"
+                       placeholder="Search problems..."
+                       class="search-input">
+                <button type="submit" class="search-button">Search</button>
+            </form>
         </div>
-    {% endfor %}
-</div>
 
-
-{% if topic %}
-    <h2>Topic: {{ topic }}</h2>
-{% endif %}
-
-{% if due_problems %}
-    <div class="collapsible-section">
-        <h2 class="collapsible-header" onclick="toggleSection('overdue')">
-            Overdue for Review
-            <span class="collapse-icon">▼</span>
-        </h2>
-        <div id="overdue" class="collapsible-content">
-            {% for problem in due_problems %}
-                {% include "partials/problem_card.html" %}
+        {# List Navigation - supports filtering and renaming via right-click/long-press #}
+        <div class="lists-nav">
+            <button class="list-tab {% if not list_filter %}active{% endif %}"
+                    onclick="window.location='/'">
+                All Problems
+            </button>
+            {% for list in lists %}
+                <button class="list-tab {% if list_filter == list.slot|string %}active{% endif %}"
+                        onclick="window.location='/?list={{ list.slot }}'"
+                        oncontextmenu="event.preventDefault(); renameList({{ list.slot }}, '{{ list.name }}')"
+                        ontouchstart="handleTouchStart(event, {{ list.slot }}, '{{ list.name }}')"
+                        ontouchend="handleTouchEnd(event)">
+                    {{ list.name }}
+                </button>
             {% endfor %}
         </div>
     </div>
 
-    <h2>All Problems</h2>
-{% endif %}
-
-
-{% for problem in all_problems %}
-    {% if not due_problems or problem.id not in due_problems|map(attribute='id')|list %}
-        {% include "partials/problem_card.html" %}
+    {# Due Problems Section #}
+    {% if due_problems %}
+    <section class="due-section">
+        <h2>Due for Review</h2>
+        <div class="problems-grid">
+            {% for problem in due_problems %}
+                {# Using shared problem card template for consistency #}
+                {% include "partials/problem_card.html" %}
+            {% endfor %}
+        </div>
+    </section>
     {% endif %}
-{% endfor %}
+
+    {# All Problems Section #}
+    <section class="all-problems">
+        <h2>All Problems</h2>
+        <div class="problems-grid">
+            {% for problem in all_problems %}
+                {# Using shared problem card template for consistency #}
+                {% include "partials/problem_card.html" %}
+            {% endfor %}
+        </div>
+    </section>
+</div>
 {% endblock %}

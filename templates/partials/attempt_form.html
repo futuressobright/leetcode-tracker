@@ -1,15 +1,13 @@
-
-
 <!-- templates/partials/attempt_form.html -->
-<form method="POST" action="/log_attempt/{{ problem.id }}" class="attempt-form" onsubmit="showButtonFeedback(this)">
-    <select name="comfort" class="comfort-select" required>
-        <option value="" disabled selected>How was it?</option>
-        {% for level, info in COMFORT_LEVELS.items() %}
-            <option value="{{ level }}">{{ info.display }}</option>
-        {% endfor %}
-    </select>
-    <input type="text" name="notes" placeholder="Notes..." class="notes-input">
-    <button type="submit" class="submit-btn">Log Attempt</button>
-</form>
-
-
+<div class="attempt-form">
+    <form method="POST" action="/log_attempt/{{ problem.id }}" class="inline-form">
+        <select name="comfort" class="comfort-select" required>
+            <option value="" disabled selected>How was it?</option>
+            <option value="Low">Hard for me</option>
+            <option value="Medium">Needed some help</option>
+            <option value="High">Got it easily</option>
+        </select>
+        <input type="text" name="notes" placeholder="Notes..." class="notes-input">
+        <button type="submit" class="log-button">Log Attempt</button>
+    </form>
+</div>

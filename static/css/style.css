@@ -1,93 +1,138 @@
-/* static/css/style.css */
-
-/* CSS Variables */
 :root {
-    --primary-color: #1a73e8;
-    --bg-color: #f8f9fa;
-    --text-color: #202124;
-    --border-color: #dadce0;
+    --primary: #4285f4;
+    --primary-hover: #3367d6;
+    --background: #e5e7eb;       /* Darker gray background */
+    --surface: #f8fafc;          /* Very slightly blue-tinted white for cards */
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #dadce0;
+    --green: #34a853;
+    --yellow: #fbbc05;
+    --red: #ea4335;
 }
 
-/* Base Styles */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.4;
     margin: 0;
-    padding: 0;
+    padding: 16px;
 }
+
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;  /* Using the larger width as it's more recent */
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 16px;
 }
 
-/* List Navigation Buttons */
-.list-buttons {
-    margin: 20px 0;
+/* Add a modifier if we need the smaller size in specific contexts */
+.container--narrow {
+    max-width: 1000px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 24px 0 16px 0;
+}
+
+/* Search and Lists Navigation */
+.top-nav {
+    margin-bottom: 24px;
+}
+
+.problem-card {
+    /* Core styles */
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--border);
+
+    /* Shadow and interaction */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease;
+
+    /* Layout */
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    height: 100%;
+    min-height: 250px;  /* Reduced from 300px for less empty space */
 }
 
-.list-button {
-    padding: 8px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 0.95em;
+.problem-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.list-button:hover {
-    background: #f0f0f0;
+
+.problems-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);  /* Desktop default */
+    gap: 24px;  /* Using the latest gap value */
+    margin: 16px 0;
 }
 
-.list-button.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+@media (max-width: 768px) {  /* Mobile breakpoint */
+    .problems-grid {
+        grid-template-columns: 1fr;  /* Single column on mobile */
+    }
 }
 
-/* Search Form */
-.search-form {
-    margin: 20px 0;
+.search-container {
+    margin-bottom: 16px;
 }
 
 .search-input {
-    padding: 8px 12px;
-    width: 300px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    margin-right: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
 }
 
-.search-btn {
-    padding: 8px 16px;
-    background: var(--primary-color);
+.search-button {
+    background: var(--primary);
     color: white;
     border: none;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
     cursor: pointer;
 }
 
-.search-btn:hover {
-    background: #1557b0;
+.lists-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
 }
 
-/* Problem Card */
-.problem-card {
-    border: 1px solid var(--border-color);
-    padding: 16px;
-    margin: 12px 0;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+.list-tab {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    cursor: pointer;
 }
+
+.list-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Problem Cards */
+
 
 .problem-header {
     display: flex;
@@ -96,413 +141,390 @@ body {
     margin-bottom: 8px;
 }
 
-.leetcode-id {
-    color: #666;
-    font-weight: normal;
+.problem-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.problem-id {
+    color: var(--text-secondary);
+    font-size: 14px;
     margin-right: 8px;
-    font-size: 0.9em;
+}
+
+.topics {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin: 4px 0 0 0;  /* Only keep top margin, remove bottom margin */
+}
+
+
+.topic {
+    background: #f1f3f4;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.topic:hover {
+    background: var(--primary);
+    color: white;
 }
 
 /* Difficulty Badges */
-.difficulty-badge {
-    padding: 4px 8px;
+.difficulty {
+    padding: 3px 8px;
     border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
 }
 
-.difficulty-badge.easy { background: #e6ffe6; color: #0a5c0a; }
-.difficulty-badge.medium { background: #fff3e6; color: #805500; }
-.difficulty-badge.hard { background: #ffe6e6; color: #850000; }
-
-/* Topic Tags */
-.topic-tags {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-.topic-tag {
-    background: #e8eaf6;
-    color: #3f51b5;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85em;
-    display: inline-block;
-    margin: 2px 0;
-}
+.easy { background: #e6f4ea; color: var(--green); }
+.medium { background: #fff3e0; color: var(--yellow); }
+.hard { background: #fce8e6; color: var(--red); }
+.tbd { background: #f1f3f4; color: var(--text-secondary); }
 
 /* List Management */
+.current-lists {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+
 .list-management {
-    margin: 12px 0;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 4px;
+    margin-top: 8px;  /* Add specific top margin here instead */
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
 }
 
-.list-toggle-btn {
-    padding: 4px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: all 0.2s;
+/* If you want more spacing in specific contexts, use a modifier class */
+.list-management--relaxed {
+    padding-top: 12px;
+    margin-bottom: 12px;
 }
 
-.list-toggle-btn:hover {
-    background: #f0f0f0;
-}
 
-.list-toggle-btn.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-/* Attempt Form */
-.attempt-form {
-    margin-top: 12px;
+.list-buttons {
     display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.list-button {
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.list-button:hover {
+    background: #f1f3f4;
+}
+
+.list-button.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+
+
+.comfort-select {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+
+.log-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.log-button:hover {
+    background: var(--primary-hover);
+}
+
+/* Add to your button styles */
+.log-button.success {
+    background-color: var(--red);  /* Uses your existing green variable */
+    transition: background-color 0.2s;  /* Smooth transition */
+}
+
+/* Problem History */
+.attempt-history {
+    margin: 8px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.history-summary {
+    line-height: 1.5;
+}
+
+/* Forms */
+.inline-form {
+    display: inline;
+}
+
+/* Utility Classes */
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    opacity: 0.8;
+}
+
+
+.rename-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.rename-modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.rename-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.rename-modal-footer {
+    display: flex;
+    justify-content: flex-end;
     gap: 8px;
 }
 
-.comfort-select,
-.notes-input,
-.submit-btn {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-}
-
-.submit-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
+.cancel-btn, .save-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.submit-btn:hover {
-    background: #1557b0;
+.cancel-btn {
+    background: transparent;
+    border: 1px solid var(--border);
 }
 
-.submit-btn.success {
-    background-color: #4caf50 !important;
-    transition: background-color 0.3s ease;
+.save-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
 }
 
-/* Problem History Page */
+/* History Page Styles */
 .history-page {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 20px;
 }
 
-.back-link {
-    display: inline-block;
-    margin: 10px 0 20px;
-    color: var(--primary-color);
-    text-decoration: none;
+.history-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+
+
+
+.attempts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .attempt-card {
-    border: 1px solid var(--border-color);
+    background: var(--surface);
     border-radius: 8px;
     padding: 16px;
-    margin: 12px 0;
-    background: white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .attempt-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.attempt-meta {
+    display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    gap: 12px;
 }
 
 .attempt-date {
-    color: #666;
-    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.next-review {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 500;
 }
 
 .attempt-notes {
-    padding: 8px;
-    background: #f5f5f5;
-    border-radius: 4px;
-    margin: 8px 0;
-    font-style: italic;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
 }
 
-/* Notifications */
-.flash-message {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 12px 24px;
-    background: #4caf50;
-    color: white;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
-}
-
-.message {
-    background: #e8f5e9;
-    border: 1px solid #81c784;
-    color: #2e7d32;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    text-align: center;
-}
-
-/* Animations */
-@keyframes slideDown {
-    from {
-        top: -100px;
-        opacity: 0;
-    }
-    to {
-        top: 20px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-    to {
-        opacity: 0;
-        transform: translate(-50%, -20px);
-    }
-}
-
-.list-button-container {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    position: relative;
-}
-
-.edit-button {
+.comfort-badge {
     padding: 4px 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    opacity: 0.5;
-    font-size: 0.9em;
-    color: var(--text-color);
-    transition: opacity 0.2s ease;
-}
-
-.edit-button:hover {
-    opacity: 1;
-}
-
-/* Make sure buttons are touch-friendly on mobile */
-@media (max-width: 768px) {
-    .list-buttons {
-        gap: 8px;  /* Slightly more space between items on mobile */
-    }
-
-    .edit-button {
-        padding: 8px 12px;  /* Larger touch target */
-    }
-}
-
-/* Base Layout */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 12px;  /* Less padding on mobile */
-    }
-}
-
-/* Search Form Responsiveness */
-.search-form {
-    margin: 20px 0;
-    display: flex;
-    gap: 8px;
-}
-
-.search-input {
-    flex: 1;  /* Take available space */
-    min-width: 0;  /* Prevent overflow */
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
     border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-@media (max-width: 768px) {
-    .search-form {
-        flex-direction: column;
-    }
+.comfort-badge.low { background: #fce8e6; color: var(--red); }
+.comfort-badge.medium { background: #fff3e0; color: var(--yellow); }
+.comfort-badge.high { background: #e6f4ea; color: var(--green); }
 
-    .search-input {
-        width: 100%;  /* Full width on mobile */
-    }
-
-    .search-btn {
-        width: 100%;
-    }
+.error-container {
+    max-width: 600px;
+    margin: 48px auto;
+    text-align: center;
+    padding: 32px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* Problem Card Responsiveness */
-.problem-header {
-    display: flex;
-    flex-wrap: wrap;  /* Allow wrapping on narrow screens */
-    gap: 8px;
-    align-items: center;
+.error-title {
+    font-size: 24px;
+    color: var(--text);
+    margin-bottom: 16px;
 }
 
-@media (max-width: 768px) {
-    .problem-header {
-        flex-direction: column;
-        align-items: flex-start;
+.error-message {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.back-link {
+    /* Core styles */
+    display: inline-block;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    /* Layout */
+    margin-bottom: 24px;
+    padding: 8px 16px;
+
+    /* Visual styling */
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.back-link:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;  /* Overrides previous hover style */
+}
+
+
+
+
+@media (min-width: 768px) {
+    .problems-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .difficulty-badge {
-        align-self: flex-start;
-    }
-}
-
-/* Attempt Form Responsiveness */
-.attempt-form {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-@media (max-width: 768px) {
+    /* Adjust the attempt form for narrower cards */
     .attempt-form {
         flex-direction: column;
+        gap: 8px;
     }
 
-    .comfort-select,
-    .notes-input,
-    .submit-btn {
+    .attempt-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .comfort-select, .notes-input {
         width: 100%;
     }
 }
 
-/* List Management Responsiveness */
-.list-management {
-    margin: 12px 0;
+.notes-input {
+    width: 100%;  /* Full width */
+    box-sizing: border-box;  /* Include padding and border in width calculation */
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
 }
 
-@media (max-width: 768px) {
-    .list-buttons {
-        flex-wrap: wrap;
-    }
 
-    .list-button-container {
-        flex: 1 1 calc(50% - 8px);  /* Two buttons per row on mobile */
-        min-width: 120px;
-    }
 
-    .list-button {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-/* Topic Tags Responsiveness */
-.topic-tags {
+.attempt-form {
+    /* Layout */
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin: 8px 0;
+    width: 100%;
+    margin-top: auto;  /* Push to bottom of parent */
 }
 
-/* Touch-friendly adjustments */
-@media (max-width: 768px) {
-    .list-button,
-    .submit-btn,
-    .comfort-select,
-    .topic-tag {
-        min-height: 44px;  /* iOS minimum touch target */
-    }
-
-    .edit-button {
-        padding: 12px;  /* Larger touch target */
-        margin: -12px;  /* Offset larger padding */
-    }
-}
-
-/* Font size adjustments */
-@media (max-width: 768px) {
-    body {
-        font-size: 16px;  /* Ensure readable text on mobile */
-    }
-
-    .leetcode-id {
-        font-size: 0.85em;
-    }
-}
-
-/* Add tap highlight color for mobile */
-@media (hover: none) {
-    .list-button:active,
-    .submit-btn:active,
-    .topic-tag:active {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-}
-
-/* Add this to prevent iOS Safari zoom on input focus */
-@media (max-width: 768px) {
-    input, select, textarea {
-        font-size: 16px;
-    }
-}
-
-.topic-tag {
-    background: #e8eaf6;
-    color: #3f51b5;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85em;
-    display: inline-block;
-    margin: 2px 0;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.topic-tag:hover {
-    background: #c5cae9;
-}
-
-
-.collapsible-header {
-    cursor: pointer;
-    user-select: none;
+.attempt-form form {
+    /* Form layout */
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
+    width: 100%;
 }
 
-.collapse-icon {
-    font-size: 0.8em;
+/* Add responsive layout if needed */
+@media (min-width: 768px) {
+    .attempt-form {
+        gap: 8px;
+    }
 }
 
-.collapsible-content {
-    transition: max-height 0.3s ease-out;
+/* New class for the content above the attempt form */
+.problem-content {
+    flex: 1;                   /* Take up available space */
+    display: flex;
+    flex-direction: column;
 }
 
-.collapsible-content.collapsed {
-    display: none;
-}
-
-/* Style for selected topic in problem cards */
-.topic-tag.selected {
-    background: var(--primary-color);
-    color: white;
-}

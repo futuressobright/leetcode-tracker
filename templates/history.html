@@ -1,30 +1,35 @@
-<!-- templates/history.html -->
 {% extends "base.html" %}
 
 {% block content %}
 <div class="history-page">
-    <h1>{{ problem.leetcode_id }}. {{ problem.title }} - problem solve history</h1>
+    <h1 class="history-title">
+        <span class="problem-id">#{{ problem.leetcode_id }}</span>
+        {{ problem.title }} - History
+    </h1>
+
     <a href="/" class="back-link">← Back to all problems</a>
 
     <div class="attempts-list">
         {% for attempt in problem.attempts %}
         <div class="attempt-card">
             <div class="attempt-header">
-                <span class="comfort-badge {{ attempt.comfort_level.lower() }}">
-                    {{ COMFORT_LEVELS[attempt.comfort_level].display }}
-                </span>
-                <span class="attempt-date">
-                    {{ attempt.attempted_at }}
-                </span>
+                <div class="attempt-meta">
+                    <span class="comfort-badge {{ attempt.comfort_level.lower() }}">
+                        {{ COMFORT_LEVELS[attempt.comfort_level].display }}
+                    </span>
+                    <span class="attempt-date">
+                        {{ attempt.attempted_at }}
+                    </span>
+                </div>
+                {% if loop.first and attempt.next_review %}
+                <div class="next-review">
+                    Next review: {{ attempt.next_review }}
+                </div>
+                {% endif %}
             </div>
             {% if attempt.notes %}
             <div class="attempt-notes">
                 {{ attempt.notes }}
-            </div>
-            {% endif %}
-            {% if loop.first and attempt.next_review %}
-            <div class="next-review">
-                Next review: {{ attempt.next_review }}
             </div>
             {% endif %}
         </div>

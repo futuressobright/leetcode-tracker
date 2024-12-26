@@ -1,46 +1,45 @@
 <!-- templates/partials/problem_card.html -->
 <div class="problem-card">
-    <!-- Existing header -->
-    <div class="problem-header">
-        <h3>
-            <span class="leetcode-id">#{{ problem.leetcode_id }}</span>
-            {{ problem.title }}
-        </h3>
-        <span class="difficulty-badge {{ 'TBD' if not problem.comfort_level else problem.comfort_level.lower() }}">
-            {{ 'TBD' if not problem.comfort_level else COMFORT_LEVELS[problem.comfort_level].display }}
-        </span>
+    <div class="problem-content">
+        <div class="problem-header">
+            <h3>
+                <span class="leetcode-id">#{{ problem.leetcode_id }}</span>
+                {{ problem.title }}
+                <a href="/history/{{ problem.id }}" class="history-link" title="View attempt history">
+                    <span class="history-icon">📋</span>
+                </a>
+            </h3>
+            <div class="badge-container">
+                <span class="difficulty-badge {{ problem.difficulty.lower() if problem.difficulty else 'unknown' }}">
+                    {{ problem.difficulty if problem.difficulty else 'Unknown' }}
+                </span>
+            </div>
+        </div>
 
-    </div>
-
-    <!-- Topics section -->
-
-
-    <div class="topics">
-        <span class="metadata-label">Topics:</span>
-        {% for topic in problem.topics.split(',') %}
-            {% set curr_topic = topic.strip() %}
-            <a href="/?topic={{ curr_topic }}"
-               class="topic-tag {% if curr_topic == request.args.get('topic') %}selected{% endif %}">
-                {{ curr_topic }}
-            </a>
-        {% endfor %}
-    </div>
-
-    <!-- List management section -->
-    <div class="list-management">
-        <span class="metadata-label">Add to list:</span>
-        <div class="list-buttons">
-            {% for list in lists %}
-            <button
-                onclick="toggleList({{ problem.id }}, {{ list.slot }})"
-                class="list-toggle-btn {% if list.name in (problem.list_names or '').split(',') %}active{% endif %}"
-            >
-                {{ list.name }}
-            </button>
+        <div class="topics">
+            <span class="metadata-label">Topics:</span>
+            {% for topic in problem.topics.split(',') %}
+                {% set curr_topic = topic.strip() %}
+                <span class="topic clickable" onclick="window.location='/?topic={{ curr_topic }}'">
+                    {{ curr_topic }}
+                </span>
             {% endfor %}
+        </div>
+
+        <div class="list-management">
+            <span class="metadata-label">Add to list:</span>
+            <div class="list-buttons">
+               {% for list in lists %}
+                    <form method="POST" action="/add_to_list/{{ problem.id }}" class="inline-form">
+                        <input type="hidden" name="list_name" value="{{ list.slot }}">
+                        <button type="submit" class="list-button {% if list.name in (problem.list_names or '') %}active{% endif %}">
+                            {{ list.name }}
+                        </button>
+                    </form>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
-    <!-- Attempt form -->
     {% include "partials/attempt_form.html" %}
 </div>

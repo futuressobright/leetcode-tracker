@@ -22,4 +22,4 @@ test_database.py::test_search_with_special_characters PASSED             [ 88%]
 test_database.py::test_concurrent_list_operations PASSED                 [ 94%]
 test_database.py::test_due_problems_date_handling PASSED                 [100%]
 
-============================== 17 passed in 0.05s ==============================
+============================== 17 passed in 0.06s ==============================
