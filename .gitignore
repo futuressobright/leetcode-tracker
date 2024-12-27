@@ -30,3 +30,11 @@ ENV/
 # OS files
 .DS_Store
 Thumbs.db
+echo "# CSS/Style maintenance tools
+.stylelintrc.json
+find-duplicates.js
+node_modules/
+
+# NPM
+package.json
+package-lock.json" >> .gitignore
