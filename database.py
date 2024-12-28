@@ -31,11 +31,21 @@ class Database:
 
     def get_problems(self, search: Optional[str] = None,
                      list_filter: Optional[str] = None,
-                     topic_filter: Optional[str] = None) -> List[sqlite3.Row]:
-        """Get problems with optional filters"""
+                     topic_filter: Optional[str] = None,
+                     page: int = 1,
+                     per_page: int = 12) -> dict:
+        """Get problems with optional filters and pagination"""
         conn = self.get_connection()
+        offset = (page - 1) * per_page
 
         try:
+            # First get total count for pagination
+            count_query = '''
+                SELECT COUNT(DISTINCT p.id) as total
+                FROM problems p
+            '''
+
+            # Your existing base query with LIMIT and OFFSET
             base_query = '''
                 WITH LatestAttempts AS (
                     SELECT problem_id,
@@ -56,31 +66,61 @@ class Database:
             '''
 
             params = []
+            where_clause = ''
+
             if list_filter:
-                base_query += '''
-                WHERE EXISTS (
-                    SELECT 1 FROM problem_lists pl2 
-                    JOIN lists l2 ON pl2.list_id = l2.id 
-                    WHERE pl2.problem_id = p.id AND l2.slot = ?
-                )'''
+                where_clause = '''
+                    WHERE EXISTS (
+                        SELECT 1 FROM problem_lists pl2 
+                        JOIN lists l2 ON pl2.list_id = l2.id 
+                        WHERE pl2.problem_id = p.id AND l2.slot = ?
+                    )'''
                 params.append(list_filter)
             elif topic_filter:
-                base_query += ' WHERE p.topics LIKE ?'
+                where_clause = ' WHERE p.topics LIKE ?'
                 params.append(f'%{topic_filter}%')
             elif search:
-                base_query += ''' WHERE (p.title LIKE ? ESCAPE '\\' 
-                                 OR p.topics LIKE ? ESCAPE '\\')'''
-                # Escape special characters in search
-                escaped_search = search.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
-                params.extend([f'%{escaped_search}%', f'%{escaped_search}%'])
+                where_clause = ' WHERE (p.title LIKE ? OR p.topics LIKE ?)'
+                params.extend([f'%{search}%', f'%{search}%'])
 
-            base_query += ' GROUP BY p.id ORDER BY CAST(p.leetcode_id AS INTEGER)'
+            # Add where clause to count query if needed
+            if where_clause:
+                count_query += where_clause
 
-            return conn.execute(base_query, params).fetchall()
+            # Get total count
+            total = conn.execute(count_query, params).fetchone()['total']
+
+            # Add pagination to main query
+            base_query += where_clause + '''
+                GROUP BY p.id 
+                ORDER BY CAST(p.leetcode_id AS INTEGER)
+                LIMIT ? OFFSET ?
+            '''
+            params.extend([per_page, offset])
+
+            problems = conn.execute(base_query, params).fetchall()
+
+            # Convert each SQLite Row to a dict to preserve attribute access
+            problem_dicts = [dict(row) for row in problems]
+
+            return {
+                'problems': problem_dicts,  # Now sending list of dicts instead of Row objects
+                'total': total,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': (total + per_page - 1) // per_page
+            }
+
         except sqlite3.Error as e:
             logging.error(f"Error fetching problems: {e}")
             conn.rollback()
             raise DatabaseError(f"Failed to fetch problems: {e}")
+
+
+
+
+
+
 
     def get_due_problems(self, search: Optional[str] = None,
                          list_filter: Optional[str] = None,

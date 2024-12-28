@@ -26,23 +26,51 @@ def close_db(error):
 
 @app.route('/')
 def index():
+    import time
+    start_total = time.time()
+
     db = get_db()
     search = request.args.get('search', '').strip()
     list_filter = request.args.get('list')
     topic_filter = request.args.get('topic', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = 12
 
     try:
-        all_problems = db.get_problems(search, list_filter, topic_filter)
-        due_problems = db.get_due_problems(search, list_filter, topic_filter)
-        lists = db.get_lists()
+        start_query = time.time()
+        problems_data = db.get_problems(search, list_filter, topic_filter, page, per_page)
+        all_problems = problems_data['problems']  # Now we get the problems from the dict
+        print(f"Problems query time: {time.time() - start_query} seconds")
 
-        return render_template('index.html',
-                               lists=lists,
-                               due_problems=due_problems,
-                               all_problems=all_problems,
-                               search=search,
-                               topic=topic_filter,
-                               today=date.today().isoformat())
+        start_due = time.time()
+        due_problems = db.get_due_problems(search, list_filter, topic_filter)
+        print(f"Due problems query time: {time.time() - start_due} seconds")
+
+        start_lists = time.time()
+        lists = db.get_lists()
+        print(f"Lists query time: {time.time() - start_lists} seconds")
+
+        start_render = time.time()
+        print("Sample problem data:", all_problems[0] if all_problems else "No problems")
+
+        # For AJAX "Load More" requests, just return problem cards
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return render_template('partials/problem_cards.html',
+                                   all_problems=all_problems)
+
+        # For normal requests, return the full page
+        response = render_template('index.html',
+                                   lists=lists,
+                                   due_problems=due_problems,
+                                   all_problems=all_problems,
+                                   pagination=problems_data,
+                                   search=search,
+                                   topic=topic_filter,
+                                   today=date.today().isoformat())
+        print(f"Template render time: {time.time() - start_render} seconds")
+        print(f"Total route time: {time.time() - start_total} seconds")
+        return response
+
     except Exception as e:
         print(f"Error in index route: {str(e)}")  # Debug print
         flash(f"Error loading problems: {str(e)}")

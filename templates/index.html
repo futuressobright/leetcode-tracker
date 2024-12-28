@@ -43,6 +43,13 @@
                 {% include "partials/problem_card.html" %}
             {% endfor %}
         </div>
+        {% if pagination.page < pagination.total_pages %}
+            <button id="load-more"
+                    class="load-more-button"
+                    data-total-pages="{{ pagination.total_pages }}">
+                Load More Problems
+            </button>
+        {% endif %}
     </section>
     {% endif %}
 

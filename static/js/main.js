@@ -164,3 +164,29 @@ function saveNewName(slot) {
     }
     closeRenameModal();
 }
+
+
+// In main.js
+document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreButton = document.getElementById('load-more');
+    let currentPage = 1;
+
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', async function() {
+            currentPage += 1;
+            const url = `/?page=${currentPage}`;
+
+            const response = await fetch(url);
+            const html = await response.text();
+
+            // Add new problems to grid
+            const grid = document.getElementById('problems-grid');
+            grid.innerHTML += html;
+
+            // Hide button if no more pages
+            if (currentPage >= loadMoreButton.dataset.totalPages) {
+                loadMoreButton.style.display = 'none';
+            }
+        });
+    }
+});

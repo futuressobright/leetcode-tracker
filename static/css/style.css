@@ -511,3 +511,16 @@ h2 {
         width: 100%;
     }
 }
+
+
+.load-more-button {
+    display: block;
+    margin: 24px auto;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
