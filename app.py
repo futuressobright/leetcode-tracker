@@ -55,10 +55,18 @@ def index():
 
         # For AJAX "Load More" requests, just return problem cards
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return render_template('partials/problem_cards.html',
-                                   all_problems=all_problems)
+            # Use the template we know exists and works
+            html = ''
+            for problem in all_problems:
+                html += render_template('partials/problem_card.html',
+                                        problem=problem,
+                                        lists=db.get_lists())
+            return html
 
         # For normal requests, return the full page
+        print("\nDEBUG Pagination Info:")
+        print("problems_data:", problems_data)
+        print("all_problems:", len(all_problems))
         response = render_template('index.html',
                                    lists=lists,
                                    due_problems=due_problems,
@@ -72,15 +80,16 @@ def index():
         return response
 
     except Exception as e:
-        print(f"Error in index route: {str(e)}")  # Debug print
-        flash(f"Error loading problems: {str(e)}")
-        return render_template('index.html',
-                               lists=[],
-                               due_problems=[],
-                               all_problems=[],
-                               search=search,
-                               topic=topic_filter,
-                               today=date.today().isoformat())
+            print(f"Error in index route: {str(e)}")  # Debug print
+            flash(f"Error loading problems: {str(e)}")
+            return render_template('index.html',
+                                   lists=[],
+                                   due_problems=[],
+                                   all_problems=[],
+                                   pagination={'page': 1, 'total_pages': 1},  # Add this
+                                   search=search,
+                                   topic=topic_filter,
+                                   today=date.today().isoformat())
 
 
 @app.route('/log_attempt/<int:problem_id>', methods=['POST'])

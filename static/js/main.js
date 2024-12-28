@@ -31,6 +31,35 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.search input').focus();
         }
     });
+
+    // Add load-more functionality
+    const loadMoreButton = document.getElementById('load-more');
+    let currentPage = 1;
+
+// Find the existing loadMoreButton code in main.js and replace it with this:
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', async function() {
+            currentPage += 1;
+            // Preserve any existing query parameters
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('page', currentPage);
+
+            const response = await fetch(`/?${searchParams.toString()}`, {
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            });
+            if (response.ok) {
+                const text = await response.text();
+                // Add new problems to existing grid
+                const problemsGrid = document.querySelector('.problems-grid');
+                problemsGrid.insertAdjacentHTML('beforeend', text);
+
+                // Hide button if we're on the last page
+                if (currentPage >= parseInt(loadMoreButton.dataset.totalPages)) {
+                    loadMoreButton.style.display = 'none';
+                }
+            }
+        });
+    }
 });
 
 function showButtonFeedback(form) {

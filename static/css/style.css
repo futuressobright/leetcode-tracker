@@ -513,9 +513,15 @@ h2 {
 }
 
 
+.all-problems {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;  /* Match the grid gap */
+}
+
 .load-more-button {
     display: block;
-    margin: 24px auto;
+    margin: 24px auto;  /* Keep horizontal auto, explicit vertical */
     padding: 8px 16px;
     background: var(--primary);
     color: white;
