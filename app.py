@@ -44,14 +44,16 @@ def index():
 
         start_due = time.time()
         due_problems = db.get_due_problems(search, list_filter, topic_filter)
-        print(f"Due problems query time: {time.time() - start_due} seconds")
+        # print(f"Due problems query time: {time.time() - start_due} seconds")
 
         start_lists = time.time()
-        lists = db.get_lists()
-        print(f"Lists query time: {time.time() - start_lists} seconds")
+        # lists = db.get_lists()
+        lists = [dict(row) for row in db.get_lists()]  # Convert SQLite Row objects to dicts
+
+        # print(f"Lists query time: {time.time() - start_lists} seconds")
 
         start_render = time.time()
-        print("Sample problem data:", all_problems[0] if all_problems else "No problems")
+        # print("Sample problem data:", all_problems[0] if all_problems else "No problems")
 
         # For AJAX "Load More" requests, just return problem cards
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -64,15 +66,36 @@ def index():
             return html
 
         # For normal requests, return the full page
-        print("\nDEBUG Pagination Info:")
+        ''' print("\nDEBUG Pagination Info:")
         print("problems_data:", problems_data)
         print("all_problems:", len(all_problems))
+        '''
+
+        print(f"DEBUG - list_filter type: {type(list_filter)}, value: {list_filter}")
+        print("DEBUG - First list object:")
+        if lists:
+            print(dict(lists[0]))  # Convert first Row object to dict to see all fields
+
+        print("DEBUG - All lists:")
+
+
+        print(f"DEBUG - list_filter: {repr(list_filter)}")
+        print(f"DEBUG - first list['slot']: {repr(lists[0]['slot'])}")
+
+
+        for l in lists:
+            print(f"slot={l['slot']}, name={l['name']}")
+
+        if list_filter is not None:
+            list_filter = str(list_filter)
+
         response = render_template('index.html',
                                    lists=lists,
                                    due_problems=due_problems,
                                    all_problems=all_problems,
                                    pagination=problems_data,
                                    search=search,
+                                   list_filter=list_filter,  # Add this line
                                    topic=topic_filter,
                                    today=date.today().isoformat())
         print(f"Template render time: {time.time() - start_render} seconds")

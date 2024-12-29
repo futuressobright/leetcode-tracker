@@ -119,6 +119,7 @@ h2 {
     border: 1px solid var(--border);
     font-weight: 500;
     cursor: pointer;
+    color: var(--text);
 }
 
 .list-tab.active {

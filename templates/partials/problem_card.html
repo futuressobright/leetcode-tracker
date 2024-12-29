@@ -31,9 +31,9 @@
             <div class="list-buttons">
                {% for list in lists %}
                     <form method="POST" action="/add_to_list/{{ problem.id }}" class="inline-form">
-                        <input type="hidden" name="list_name" value="{{ list.slot }}">
-                        <button type="submit" class="list-button {% if list.name in (problem.list_names or '') %}active{% endif %}">
-                            {{ list.name }}
+                        <input type="hidden" name="list_name" value="{{ list['slot'] }}">
+                        <button type="submit" class="list-button {% if list['name'] in (problem.list_names or '') %}active{% endif %}">
+                            {{ list['name'] }}
                         </button>
                     </form>
                 {% endfor %}
