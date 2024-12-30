@@ -156,3 +156,17 @@ function saveNewName(slot) {
     }
     closeRenameModal();
 }
+
+
+function updateSort(direction) {
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentSort = searchParams.get('difficulty_sort');
+
+    if (currentSort === direction) {
+        searchParams.delete('difficulty_sort');
+    } else {
+        searchParams.set('difficulty_sort', direction);
+    }
+
+    window.location.href = `/?${searchParams.toString()}`;
+}

@@ -106,14 +106,7 @@ h2 {
     border-color: var(--primary);
 }
 
-.search-input {
-    width: 100%;
-    padding: 10px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 12px;
-}
+
 
 .search-button {
     background: var(--primary);
@@ -535,9 +528,12 @@ h2 {
 
 
 .all-problems {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;  /* Match the grid gap */
+    margin-top: 60px;
+}
+
+.all-problems h2 {
+    font-weight: 600;
+    font-size: 24px;
 }
 
 .load-more-button {
@@ -563,4 +559,33 @@ h2 {
 
 .section-content.collapsed {
     display: none;
+}
+
+
+.search-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    height: 36px;
+}
+
+.sort-pills {
+    display: flex;
+    gap: 8px;
+    height: 36px;
+}
+
+.sort-pills .list-tab {
+    height: 100%;
+    display: flex;
+    align-items: center;
 }

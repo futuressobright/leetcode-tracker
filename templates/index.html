@@ -7,17 +7,21 @@
     <div class="top-nav">
         {# Search Form #}
         <div class="search-container">
-            <form method="GET" class="search-form">
+            <div class="search-row">
                 <input type="text" name="search" value="{{ search }}"
                        placeholder="Search problems..."
                        class="search-input">
-                <select name="difficulty_sort" class="difficulty-sort">
-                    <option value="">Sort by ID</option>
-                    <option value="asc" {% if request.args.get('difficulty_sort') == 'asc' %}selected{% endif %}>Easy to Hard</option>
-                    <option value="desc" {% if request.args.get('difficulty_sort') == 'desc' %}selected{% endif %}>Hard to Easy</option>
-                </select>
-                <button type="submit" class="search-button">Apply</button>
-            </form>
+                <div class="sort-pills">
+                    <button onclick="updateSort('asc')"
+                            class="list-tab {% if request.args.get('difficulty_sort') == 'asc' %}active{% endif %}">
+                        Easy→Hard
+                    </button>
+                    <button onclick="updateSort('desc')"
+                            class="list-tab {% if request.args.get('difficulty_sort') == 'desc' %}active{% endif %}">
+                        Hard→Easy
+                    </button>
+                </div>
+            </div>
         </div>
 
         {# List Navigation - supports filtering and renaming via right-click/long-press #}
