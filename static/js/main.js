@@ -150,6 +150,13 @@ function handleTouchEnd(event) {
     clearTimeout(touchTimer);
 }
 
+function toggleSection(sectionId) {
+    const content = document.getElementById(sectionId);
+    const icon = content.parentElement.querySelector('.collapse-icon');
+    content.classList.toggle('collapsed');
+    icon.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+}
+
 // Modern rename list modal functionality
 function renameList(slot, currentName) {
     // Create a modern-looking modal instead of using prompt()

@@ -33,7 +33,8 @@ class Database:
                      list_filter: Optional[str] = None,
                      topic_filter: Optional[str] = None,
                      page: int = 1,
-                     per_page: int = 12) -> dict:
+                     per_page: int = 12,
+                     sort_by_difficulty: Optional[str] = None) -> dict:
         """Get problems with optional filters and pagination"""
         conn = self.get_connection()
         offset = (page - 1) * per_page
@@ -91,11 +92,31 @@ class Database:
             total = conn.execute(count_query, params).fetchone()['total']
 
             # Add pagination to main query
-            base_query += where_clause + '''
-                GROUP BY p.id 
-                ORDER BY CAST(p.leetcode_id AS INTEGER)
-                LIMIT ? OFFSET ?
-            '''
+            # Add pagination to main query
+            base_query += where_clause + ' GROUP BY p.id'
+
+            # Add difficulty sorting
+            if sort_by_difficulty == 'asc':
+                base_query += ''' ORDER BY 
+                                CASE p.difficulty 
+                                    WHEN 'Easy' THEN 1 
+                                    WHEN 'Medium' THEN 2 
+                                    WHEN 'Hard' THEN 3 
+                                    ELSE 4 
+                                END'''
+            elif sort_by_difficulty == 'desc':
+                base_query += ''' ORDER BY 
+                                CASE p.difficulty 
+                                    WHEN 'Hard' THEN 1 
+                                    WHEN 'Medium' THEN 2 
+                                    WHEN 'Easy' THEN 3 
+                                    ELSE 4 
+                                END'''
+            else:
+                base_query += ' ORDER BY CAST(p.leetcode_id AS INTEGER)'
+
+            base_query += ' LIMIT ? OFFSET ?'
+
             params.extend([per_page, offset])
 
             problems = conn.execute(base_query, params).fetchall()

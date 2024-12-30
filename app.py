@@ -33,12 +33,14 @@ def index():
     search = request.args.get('search', '').strip()
     list_filter = request.args.get('list')
     topic_filter = request.args.get('topic', '').strip()
+    sort_by_difficulty = request.args.get('difficulty_sort')  # Add this line
+
     page = request.args.get('page', 1, type=int)
     per_page = 12
 
     try:
         start_query = time.time()
-        problems_data = db.get_problems(search, list_filter, topic_filter, page, per_page)
+        problems_data = db.get_problems(search, list_filter, topic_filter, page, per_page, sort_by_difficulty)
         all_problems = problems_data['problems']  # Now we get the problems from the dict
         print(f"Problems query time: {time.time() - start_query} seconds")
 

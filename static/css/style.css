@@ -86,6 +86,26 @@ h2 {
     margin-bottom: 16px;
 }
 
+.search-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.difficulty-sort {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    color: var(--text);
+}
+
+.difficulty-sort:hover {
+    border-color: var(--primary);
+}
+
 .search-input {
     width: 100%;
     padding: 10px 16px;
@@ -530,4 +550,17 @@ h2 {
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
+}
+
+.section-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.collapse-icon {
+    margin-right: 8px;
+}
+
+.section-content.collapsed {
+    display: none;
 }

@@ -7,11 +7,16 @@
     <div class="top-nav">
         {# Search Form #}
         <div class="search-container">
-            <form method="GET">
+            <form method="GET" class="search-form">
                 <input type="text" name="search" value="{{ search }}"
                        placeholder="Search problems..."
                        class="search-input">
-                <button type="submit" class="search-button">Search</button>
+                <select name="difficulty_sort" class="difficulty-sort">
+                    <option value="">Sort by ID</option>
+                    <option value="asc" {% if request.args.get('difficulty_sort') == 'asc' %}selected{% endif %}>Easy to Hard</option>
+                    <option value="desc" {% if request.args.get('difficulty_sort') == 'desc' %}selected{% endif %}>Hard to Easy</option>
+                </select>
+                <button type="submit" class="search-button">Apply</button>
             </form>
         </div>
 
@@ -39,15 +44,20 @@
     {# Due Problems Section #}
     {% if due_problems %}
     <section class="due-section">
-        <h2>Due for Review</h2>
-        <div class="problems-grid">
-            {% for problem in due_problems %}
-                {# Using shared problem card template for consistency #}
-                {% include "partials/problem_card.html" %}
-            {% endfor %}
+        <h2 class="section-header" onclick="toggleSection('due-problems')">
+            <span class="collapse-icon">▼</span>
+            Due for Review
+        </h2>
+        <div id="due-problems" class="section-content">
+            <div class="problems-grid">
+                {% for problem in due_problems %}
+                    {% include "partials/problem_card.html" %}
+                {% endfor %}
+            </div>
         </div>
     </section>
     {% endif %}
+
 
     {# All Problems Section #}
     <section class="all-problems">
