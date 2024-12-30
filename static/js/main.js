@@ -1,93 +1,65 @@
-// static/js/main.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle form submissions with fetch API
+    // Form submissions
     document.querySelectorAll('.attempt-form form').forEach(form => {
-        console.log('Found attempt form:', form);
         form.addEventListener('submit', async function(e) {
-            console.log('Form submitted');
             e.preventDefault();
-            showButtonFeedback(form);  // Add button feedback
-
+            showButtonFeedback(form);
             try {
-                console.log('Sending to:', form.action);
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: new FormData(form)
                 });
-
-                if (response.ok) {
-                    window.location.reload();
-                }
+                if (response.ok) window.location.reload();
             } catch (error) {
                 console.error('Error:', error);
             }
         });
     });
 
-    // Optional: Add keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if (e.key === '/') {
-            e.preventDefault();
-            document.querySelector('.search input').focus();
-        }
-    });
-
-    // Add load-more functionality
+    // Load more functionality
     const loadMoreButton = document.getElementById('load-more');
     let currentPage = 1;
 
-// Find the existing loadMoreButton code in main.js and replace it with this:
     if (loadMoreButton) {
         loadMoreButton.addEventListener('click', async function() {
             currentPage += 1;
-            // Preserve any existing query parameters
             const searchParams = new URLSearchParams(window.location.search);
             searchParams.set('page', currentPage);
 
             const response = await fetch(`/?${searchParams.toString()}`, {
                 headers: {'X-Requested-With': 'XMLHttpRequest'}
             });
-            if (response.ok) {
-                const text = await response.text();
-                // Add new problems to existing grid
-                const problemsGrid = document.querySelector('.problems-grid');
-                problemsGrid.insertAdjacentHTML('beforeend', text);
 
-                // Hide button if we're on the last page
+            if (response.ok) {
+                const html = await response.text();
+                const problemsGrid = document.querySelector('.all-problems .problems-grid');
+                problemsGrid.insertAdjacentHTML('beforeend', html);
+
                 if (currentPage >= parseInt(loadMoreButton.dataset.totalPages)) {
                     loadMoreButton.style.display = 'none';
                 }
             }
         });
     }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === '/') {
+            e.preventDefault();
+            document.querySelector('.search input').focus();
+        }
+    });
 });
 
 function showButtonFeedback(form) {
-    const button = form.querySelector('.log-button');  // Changed from .submit-btn to .log-button
+    const button = form.querySelector('.log-button');
     const originalText = button.textContent;
-
-    // Add success class and change text
     button.classList.add('success');
     button.textContent = 'Logged!';
-
-    // Reset after 2 seconds
     setTimeout(() => {
         button.classList.remove('success');
         button.textContent = originalText;
     }, 2000);
-}
-
-function renameList(slot, currentName) {
-    const newName = prompt('Enter list name:', currentName);
-    if (newName && newName.trim()) {
-        fetch(`/rename_list/${slot}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `name=${encodeURIComponent(newName.trim())}`
-        }).then(() => window.location.reload());
-    }
 }
 
 function toggleList(problemId, slot) {
@@ -95,15 +67,16 @@ function toggleList(problemId, slot) {
         method: 'POST'
     }).then(response => {
         if (response.ok) {
-            // Reload the page to reflect the accurate state
             window.location.reload();
         }
     }).catch(error => console.error('Error:', error));
 }
 
-// Touch handling for mobile
+// Touch handling
 let touchStartX = 0;
 let touchEndX = 0;
+let touchTimer;
+const LONG_PRESS_DURATION = 500;
 
 document.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
@@ -117,9 +90,7 @@ document.addEventListener('touchend', e => {
 function handleSwipe() {
     const SWIPE_THRESHOLD = 50;
     const diff = touchEndX - touchStartX;
-
     if (Math.abs(diff) > SWIPE_THRESHOLD) {
-        // Could implement swipe navigation between lists
         if (diff > 0) {
             // Swipe right - previous list
         } else {
@@ -127,18 +98,6 @@ function handleSwipe() {
         }
     }
 }
-
-function toggleSection(sectionId) {
-    const content = document.getElementById(sectionId);
-    const header = content.previousElementSibling;
-    const icon = header.querySelector('.collapse-icon');
-
-    content.classList.toggle('collapsed');
-    icon.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
-}
-
-let touchTimer;
-const LONG_PRESS_DURATION = 500; // ms
 
 function handleTouchStart(event, slot, name) {
     touchTimer = setTimeout(() => {
@@ -157,9 +116,7 @@ function toggleSection(sectionId) {
     icon.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
 }
 
-// Modern rename list modal functionality
 function renameList(slot, currentName) {
-    // Create a modern-looking modal instead of using prompt()
     const modal = document.createElement('div');
     modal.className = 'rename-modal';
     modal.innerHTML = `
@@ -176,7 +133,6 @@ function renameList(slot, currentName) {
     const input = modal.querySelector('input');
     input.select();
 
-    // Handle Enter key
     input.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') saveNewName(slot);
         if (e.key === 'Escape') closeRenameModal();
@@ -200,29 +156,3 @@ function saveNewName(slot) {
     }
     closeRenameModal();
 }
-
-
-// In main.js
-document.addEventListener('DOMContentLoaded', function() {
-    const loadMoreButton = document.getElementById('load-more');
-    let currentPage = 1;
-
-    if (loadMoreButton) {
-        loadMoreButton.addEventListener('click', async function() {
-            currentPage += 1;
-            const url = `/?page=${currentPage}`;
-
-            const response = await fetch(url);
-            const html = await response.text();
-
-            // Add new problems to grid
-            const grid = document.getElementById('problems-grid');
-            grid.innerHTML += html;
-
-            // Hide button if no more pages
-            if (currentPage >= loadMoreButton.dataset.totalPages) {
-                loadMoreButton.style.display = 'none';
-            }
-        });
-    }
-});
