@@ -76,7 +76,7 @@ h2 {
 .problems-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);  /* Desktop default */
-    gap: 24px;  /* Using the latest gap value */
+    gap: 48px;  /* Using the latest gap value */
     margin: 16px 0;
 }
 

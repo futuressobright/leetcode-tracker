@@ -43,3 +43,7 @@ package-lock.json" >> .gitignore
 
 # housekeeping
 project_files_upload/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
