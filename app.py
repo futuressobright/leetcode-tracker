@@ -79,8 +79,6 @@ def index():
             print(dict(lists[0]))  # Convert first Row object to dict to see all fields
 
         print("DEBUG - All lists:")
-
-
         print(f"DEBUG - list_filter: {repr(list_filter)}")
         print(f"DEBUG - first list['slot']: {repr(lists[0]['slot'])}")
 
@@ -91,15 +89,19 @@ def index():
         if list_filter is not None:
             list_filter = str(list_filter)
 
+        due_problem_ids = {p['id'] for p in due_problems}
+        filtered_problems = [p for p in all_problems if p['id'] not in due_problem_ids]
+
         response = render_template('index.html',
                                    lists=lists,
                                    due_problems=due_problems,
-                                   all_problems=all_problems,
+                                   all_problems=filtered_problems,  # Changed this line
                                    pagination=problems_data,
                                    search=search,
-                                   list_filter=list_filter,  # Add this line
+                                   list_filter=list_filter,
                                    topic=topic_filter,
                                    today=date.today().isoformat())
+
         print(f"Template render time: {time.time() - start_render} seconds")
         print(f"Total route time: {time.time() - start_total} seconds")
         return response

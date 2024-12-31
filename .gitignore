@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 leetcode.db
 .DS_Store" > .gitignore
+
 # Database
 *.db
 *.sqlite
@@ -38,3 +39,7 @@ node_modules/
 # NPM
 package.json
 package-lock.json" >> .gitignore
+
+
+# housekeeping
+project_files_upload/
