@@ -77,7 +77,7 @@ h2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);  /* Desktop default */
     gap: 48px;  /* Using the latest gap value */
-    margin: 16px 0;
+    margin: 16px 0 48px;
 }
 
 
