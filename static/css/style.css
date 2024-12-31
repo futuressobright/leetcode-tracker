@@ -125,6 +125,12 @@ h2 {
     margin-bottom: 16px;
 }
 
+/* Add separation after "All Problems" button */
+.lists-nav .list-tab:first-child {
+    margin-right: 16px;
+}
+
+
 .list-tab {
     padding: 6px 12px;
     border-radius: 16px;
