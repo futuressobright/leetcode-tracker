@@ -170,3 +170,20 @@ function updateSort(direction) {
 
     window.location.href = `/?${searchParams.toString()}`;
 }
+
+
+function updateNeverAttempted() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentNeverAttempted = searchParams.get('never_attempted');
+
+    if (currentNeverAttempted === 'true') {
+        // Just remove never_attempted and preserve all other params
+        searchParams.delete('never_attempted');
+    } else {
+        // Add never_attempted and preserve all other params
+        searchParams.set('never_attempted', 'true');
+    }
+
+    // This will maintain all other parameters including any active list filter
+    window.location.href = searchParams.toString() ? `/?${searchParams.toString()}` : '/';
+}

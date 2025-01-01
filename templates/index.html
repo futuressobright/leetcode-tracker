@@ -13,11 +13,11 @@
                        class="search-input">
                 <div class="sort-pills">
                     <button onclick="updateSort('asc')"
-                            class="list-tab {% if request.args.get('difficulty_sort') == 'asc' %}active{% endif %}">
+                            class="filter-tab {% if request.args.get('difficulty_sort') == 'asc' %}active{% endif %}">
                         Easy➜Hard
                     </button>
                     <button onclick="updateSort('desc')"
-                            class="list-tab {% if request.args.get('difficulty_sort') == 'desc' %}active{% endif %}">
+                            class="filter-tab {% if request.args.get('difficulty_sort') == 'desc' %}active{% endif %}">
                         Hard➜Easy
                     </button>
                 </div>
@@ -26,9 +26,16 @@
 
         {# List Navigation - supports filtering and renaming via right-click/long-press #}
         <div class="lists-nav">
-            <button class="list-tab {% if not list_filter %}active{% endif %}"
+            {# Primary navigation buttons #}
+            <button class="list-tab {% if not list_filter and not request.args.get('never_attempted') %}active{% endif %}"
                     onclick="window.location='/'">
                 All Problems
+            </button>
+
+            {# Filter buttons #}
+            <button class="filter-tab {% if request.args.get('never_attempted') == 'true' %}active{% endif %}"
+                    onclick="updateNeverAttempted()">
+                    Never Attempted
             </button>
 
             {% for list in lists %}

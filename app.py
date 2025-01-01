@@ -33,7 +33,8 @@ def index():
     search = request.args.get('search', '').strip()
     list_filter = request.args.get('list')
     topic_filter = request.args.get('topic', '').strip()
-    sort_by_difficulty = request.args.get('difficulty_sort')  # Add this line
+    sort_by_difficulty = request.args.get('difficulty_sort')
+    never_attempted = request.args.get('never_attempted') == 'true'
 
     page = request.args.get('page', 1, type=int)
     per_page = 12
@@ -41,25 +42,40 @@ def index():
     try:
         start_query = time.time()
         problems_data = db.get_problems(search, list_filter, topic_filter, page, per_page, sort_by_difficulty)
-        all_problems = problems_data['problems']  # Now we get the problems from the dict
+        all_problems = problems_data['problems']
+
+        # Filter never attempted problems in memory if requested
+        if never_attempted:
+            filtered_problems = [p for p in all_problems if not p.get('comfort_level')]
+            total_filtered = len(filtered_problems)
+            total_pages = (total_filtered + per_page - 1) // per_page
+
+            # Apply pagination to filtered results
+            start_idx = (page - 1) * per_page
+            problems_data = {
+                'problems': filtered_problems[start_idx:start_idx + per_page],
+                'total': total_filtered,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages
+            }
+            all_problems = problems_data['problems']
+
         print(f"Problems query time: {time.time() - start_query} seconds")
 
-        start_due = time.time()
-        due_problems = db.get_due_problems(search, list_filter, topic_filter)
-        # print(f"Due problems query time: {time.time() - start_due} seconds")
+        # Only get due problems if not in never_attempted mode
+        start_due = time.time()  # Moved this before the if statement
+        due_problems = [] if never_attempted else db.get_due_problems(search, list_filter, topic_filter)
+        print(f"Due problems query time: {time.time() - start_due} seconds")
 
         start_lists = time.time()
-        # lists = db.get_lists()
-        lists = [dict(row) for row in db.get_lists()]  # Convert SQLite Row objects to dicts
-
-        # print(f"Lists query time: {time.time() - start_lists} seconds")
+        lists = [dict(row) for row in db.get_lists()]
+        print(f"Lists query time: {time.time() - start_lists} seconds")
 
         start_render = time.time()
-        # print("Sample problem data:", all_problems[0] if all_problems else "No problems")
 
         # For AJAX "Load More" requests, just return problem cards
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            # Use the template we know exists and works
             html = ''
             for problem in all_problems:
                 html += render_template('partials/problem_card.html',
@@ -68,20 +84,14 @@ def index():
             return html
 
         # For normal requests, return the full page
-        ''' print("\nDEBUG Pagination Info:")
-        print("problems_data:", problems_data)
-        print("all_problems:", len(all_problems))
-        '''
-
         print(f"DEBUG - list_filter type: {type(list_filter)}, value: {list_filter}")
         print("DEBUG - First list object:")
         if lists:
-            print(dict(lists[0]))  # Convert first Row object to dict to see all fields
+            print(dict(lists[0]))
 
         print("DEBUG - All lists:")
         print(f"DEBUG - list_filter: {repr(list_filter)}")
         print(f"DEBUG - first list['slot']: {repr(lists[0]['slot'])}")
-
 
         for l in lists:
             print(f"slot={l['slot']}, name={l['name']}")
@@ -95,7 +105,7 @@ def index():
         response = render_template('index.html',
                                    lists=lists,
                                    due_problems=due_problems,
-                                   all_problems=filtered_problems,  # Changed this line
+                                   all_problems=filtered_problems,
                                    pagination=problems_data,
                                    search=search,
                                    list_filter=list_filter,
@@ -107,16 +117,16 @@ def index():
         return response
 
     except Exception as e:
-            print(f"Error in index route: {str(e)}")  # Debug print
-            flash(f"Error loading problems: {str(e)}")
-            return render_template('index.html',
-                                   lists=[],
-                                   due_problems=[],
-                                   all_problems=[],
-                                   pagination={'page': 1, 'total_pages': 1},  # Add this
-                                   search=search,
-                                   topic=topic_filter,
-                                   today=date.today().isoformat())
+        print(f"Error in index route: {str(e)}")  # Debug print
+        flash(f"Error loading problems: {str(e)}")
+        return render_template('index.html',
+                               lists=[],
+                               due_problems=[],
+                               all_problems=[],
+                               pagination={'page': 1, 'total_pages': 1},
+                               search=search,
+                               topic=topic_filter,
+                               today=date.today().isoformat())
 
 
 @app.route('/log_attempt/<int:problem_id>', methods=['POST'])

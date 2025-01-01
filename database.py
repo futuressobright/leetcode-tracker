@@ -34,7 +34,8 @@ class Database:
                      topic_filter: Optional[str] = None,
                      page: int = 1,
                      per_page: int = 12,
-                     sort_by_difficulty: Optional[str] = None) -> dict:
+                     sort_by_difficulty: Optional[str] = None,
+                     never_attempted: Optional[bool] = None) -> dict:
         """Get problems with optional filters and pagination"""
         conn = self.get_connection()
         offset = (page - 1) * per_page
@@ -69,7 +70,13 @@ class Database:
             params = []
             where_clause = ''
 
-            if list_filter:
+            if never_attempted:
+                where_clause = '''
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM attempts a 
+                        WHERE a.problem_id = p.id
+                    )'''
+            elif list_filter:
                 where_clause = '''
                     WHERE EXISTS (
                         SELECT 1 FROM problem_lists pl2 

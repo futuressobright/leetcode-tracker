@@ -1,14 +1,19 @@
 :root {
+    /* Existing colors */
     --primary: #4285f4;
     --primary-hover: #3367d6;
-    --background: #e5e7eb;       /* Darker gray background */
-    --surface: #f8fafc;          /* Very slightly blue-tinted white for cards */
+    --background: #e5e7eb;
+    --surface: #f8fafc;
     --text: #202124;
     --text-secondary: #5f6368;
     --border: #dadce0;
     --green: #34a853;
     --yellow: #fbbc05;
     --red: #ea4335;
+
+    /* New colors for filter buttons */
+    --filter-bg: #E4A0B7;      /* Pastel pink */
+    --filter-border: #FF6347;  /* Slightly darker coral */
 }
 
 body {
@@ -131,21 +136,6 @@ h2 {
 }
 
 
-.list-tab {
-    padding: 6px 12px;
-    border-radius: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--text);
-}
-
-.list-tab.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
 
 /* Problem Cards */
 
@@ -594,4 +584,38 @@ h2 {
     height: 100%;
     display: flex;
     align-items: center;
+}
+
+
+.list-tab {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.list-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* New filter button styles */
+.filter-tab {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.filter-tab.active {
+    background: var(--filter-bg);
+    color: white;               /* Changed to white for better contrast */
+    border-color: var(--filter-border);
 }
