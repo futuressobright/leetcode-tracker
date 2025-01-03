@@ -1,4 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+/**
+     * URL Parameter Management Pattern
+     * This app uses URLSearchParams to manage filter state in the URL.
+     * Each filter (search, sort, never_attempted, etc) should:
+     * 1. Keep existing params using URLSearchParams(window.location.search)
+     * 2. Update only its relevant parameter
+     * 3. Navigate using window.location.href
+     * This ensures filters can be combined and bookmarked.
+     */
+
+
+// Search functionality with debouncing
+    console.log('Looking for search input...');  // DEBUG
+    const searchInput = document.querySelector('input[name="search"]');
+    console.log('Search input found:', searchInput);  // DEBUG
+
+    if (searchInput) {
+        console.log('Setting up search event listener');  // DEBUG
+        let debounceTimer;
+
+        // Preserve existing search term when page loads
+        const params = new URLSearchParams(window.location.search);
+        const existingSearch = params.get('search');
+        console.log('Existing search term:', existingSearch);  // DEBUG
+
+        if (existingSearch) {
+            searchInput.value = existingSearch;
+        }
+
+        searchInput.addEventListener('input', function(e) {
+            console.log('Search input event fired:', e.target.value);  // DEBUG
+            // Clear any pending timeouts
+            clearTimeout(debounceTimer);
+
+            // Set a new timeout to update search
+            debounceTimer = setTimeout(() => {
+                console.log('Debounce timer fired');  // DEBUG
+                const searchParams = new URLSearchParams(window.location.search);
+                const searchTerm = e.target.value.trim();
+                console.log('Search term:', searchTerm);  // DEBUG
+
+                // Update or remove search parameter based on input
+                if (searchTerm) {
+                    searchParams.set('search', searchTerm);
+                } else {
+                    searchParams.delete('search');
+                }
+
+                const newUrl = `/?${searchParams.toString()}`;
+                console.log('Navigating to:', newUrl);  // DEBUG
+                window.location.href = newUrl;
+            }, 500);
+        });
+    }
+
+
+
     // Form submissions
     document.querySelectorAll('.attempt-form form').forEach(form => {
         form.addEventListener('submit', async function(e) {

@@ -88,6 +88,7 @@ class Database:
                 where_clause = ' WHERE p.topics LIKE ?'
                 params.append(f'%{topic_filter}%')
             elif search:
+                search = search.strip('"\'')  # Remove both single and double quotes
                 where_clause = ' WHERE (p.title LIKE ? OR p.topics LIKE ?)'
                 params.extend([f'%{search}%', f'%{search}%'])
 
