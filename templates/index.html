@@ -40,7 +40,7 @@
 
             {% for list in lists %}
                 <button class="list-tab {% if list_filter == list['slot']|string %}active{% endif %}"
-                        onclick="window.location='/?list={{ list['slot'] }}'"
+                        onclick="toggleListFilter({{ list['slot'] }})"
                         oncontextmenu="event.preventDefault(); renameList({{ list['slot'] }}, '{{ list['name'] }}')"
                         ontouchstart="handleTouchStart(event, {{ list['slot'] }}, '{{ list['name'] }}')"
                         ontouchend="handleTouchEnd(event)">

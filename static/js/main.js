@@ -230,6 +230,21 @@ function updateSort(direction) {
 }
 
 
+function toggleListFilter(slot) {
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentList = searchParams.get('list');
+
+    // If the clicked list is already active, remove it to show all problems
+    if (currentList === slot.toString()) {
+        searchParams.delete('list');
+    } else {
+        searchParams.set('list', slot);
+    }
+
+    // Navigate to new URL, preserving other parameters
+    window.location.href = searchParams.toString() ? `/?${searchParams.toString()}` : '/';
+}
+
 function updateNeverAttempted() {
     const searchParams = new URLSearchParams(window.location.search);
     const currentNeverAttempted = searchParams.get('never_attempted');
@@ -245,3 +260,5 @@ function updateNeverAttempted() {
     // This will maintain all other parameters including any active list filter
     window.location.href = searchParams.toString() ? `/?${searchParams.toString()}` : '/';
 }
+
+
