@@ -241,6 +241,9 @@ function toggleListFilter(slot) {
         searchParams.set('list', slot);
     }
 
+    // Clear the search parameter when toggling lists
+    searchParams.delete('search');
+
     // Navigate to new URL, preserving other parameters
     window.location.href = searchParams.toString() ? `/?${searchParams.toString()}` : '/';
 }
