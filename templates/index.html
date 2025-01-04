@@ -27,7 +27,7 @@
         {# List Navigation - supports filtering and renaming via right-click/long-press #}
         <div class="lists-nav">
             {# Primary navigation buttons #}
-            <button class="list-tab {% if not list_filter and not request.args.get('never_attempted') %}active{% endif %}"
+            <button class="list-tab {% if not list_filter %}active{% endif %}"
                     onclick="window.location='/'">
                 All Problems
             </button>
