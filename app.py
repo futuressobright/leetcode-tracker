@@ -45,21 +45,43 @@ def index():
         all_problems = problems_data['problems']
 
         # Filter never attempted problems in memory if requested
+        # Handle never attempted problems
+        # Handle never attempted problems
         if never_attempted:
-            filtered_problems = [p for p in all_problems if not p.get('comfort_level')]
-            total_filtered = len(filtered_problems)
-            total_pages = (total_filtered + per_page - 1) // per_page
+            print("DEBUG: Processing never_attempted filter")
+            # First get ALL never attempted problems before pagination
+            all_never_attempted = db.get_problems(
+                search=search,
+                list_filter=list_filter,
+                topic_filter=topic_filter,
+                page=1,
+                per_page=9999999,  # Large number to get all problems
+                sort_by_difficulty=sort_by_difficulty
+            )['problems']
 
-            # Apply pagination to filtered results
+            # Filter for never attempted
+            filtered_problems = [p for p in all_never_attempted if not p.get('comfort_level')]
+            total_filtered = len(filtered_problems)
+
+            # Then apply pagination
             start_idx = (page - 1) * per_page
-            problems_data = {
-                'problems': filtered_problems[start_idx:start_idx + per_page],
+            end_idx = start_idx + per_page
+
+            problems_data.update({
+                'problems': filtered_problems[start_idx:end_idx],
                 'total': total_filtered,
-                'page': page,
-                'per_page': per_page,
-                'total_pages': total_pages
-            }
+                'total_pages': (total_filtered + per_page - 1) // per_page,
+                'page': page
+            })
             all_problems = problems_data['problems']
+
+            print(f"DEBUG: Total never attempted before pagination: {total_filtered}")
+            print(f"DEBUG: Problems per page: {per_page}")
+            print(f"DEBUG: Total pages: {problems_data['total_pages']}")
+            print(f"DEBUG: Current page: {page}")
+            print(f"DEBUG: Problems on this page: {len(all_problems)}")
+
+            print(f"DEBUG: Final problems_data: {problems_data}")
 
         print(f"Problems query time: {time.time() - start_query} seconds")
 
