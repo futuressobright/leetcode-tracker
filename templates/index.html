@@ -72,7 +72,17 @@
 
     {# All Problems Section #}
     <section class="all-problems">
-        <h2>All Problems</h2>
+        <h2>
+            {% if list_filter %}
+                {% for list in lists %}
+                    {% if list['slot']|string == list_filter %}
+                        {{ list['name'] }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                All Problems
+            {% endif %}
+        </h2>
         <div class="problems-grid">
             {% for problem in all_problems %}
                 {# Using shared problem card template for consistency #}
