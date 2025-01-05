@@ -48,7 +48,6 @@ def index():
         # Handle never attempted problems
         # Handle never attempted problems
         if never_attempted:
-            print("DEBUG: Processing never_attempted filter")
             # First get ALL never attempted problems before pagination
             all_never_attempted = db.get_problems(
                 search=search,
@@ -75,24 +74,14 @@ def index():
             })
             all_problems = problems_data['problems']
 
-            print(f"DEBUG: Total never attempted before pagination: {total_filtered}")
-            print(f"DEBUG: Problems per page: {per_page}")
-            print(f"DEBUG: Total pages: {problems_data['total_pages']}")
-            print(f"DEBUG: Current page: {page}")
-            print(f"DEBUG: Problems on this page: {len(all_problems)}")
 
-            print(f"DEBUG: Final problems_data: {problems_data}")
-
-        print(f"Problems query time: {time.time() - start_query} seconds")
 
         # Only get due problems if not in never_attempted mode
         start_due = time.time()  # Moved this before the if statement
         due_problems = [] if never_attempted else db.get_due_problems(search, list_filter, topic_filter)
-        print(f"Due problems query time: {time.time() - start_due} seconds")
 
         start_lists = time.time()
         lists = [dict(row) for row in db.get_lists()]
-        print(f"Lists query time: {time.time() - start_lists} seconds")
 
         start_render = time.time()
 
@@ -105,18 +94,7 @@ def index():
                                         lists=db.get_lists())
             return html
 
-        # For normal requests, return the full page
-        print(f"DEBUG - list_filter type: {type(list_filter)}, value: {list_filter}")
-        print("DEBUG - First list object:")
-        if lists:
-            print(dict(lists[0]))
 
-        print("DEBUG - All lists:")
-        print(f"DEBUG - list_filter: {repr(list_filter)}")
-        print(f"DEBUG - first list['slot']: {repr(lists[0]['slot'])}")
-
-        for l in lists:
-            print(f"slot={l['slot']}, name={l['name']}")
 
         if list_filter is not None:
             list_filter = str(list_filter)
@@ -134,12 +112,10 @@ def index():
                                    topic=topic_filter,
                                    today=date.today().isoformat())
 
-        print(f"Template render time: {time.time() - start_render} seconds")
-        print(f"Total route time: {time.time() - start_total} seconds")
+
         return response
 
     except Exception as e:
-        print(f"Error in index route: {str(e)}")  # Debug print
         flash(f"Error loading problems: {str(e)}")
         return render_template('index.html',
                                lists=[],
@@ -153,21 +129,16 @@ def index():
 
 @app.route('/log_attempt/<int:problem_id>', methods=['POST'])
 def log_attempt(problem_id):
-    print(f"Attempting to log for problem {problem_id}")
-    print(f"Form data: {request.form}")
+
     comfort = request.form['comfort']
     notes = request.form.get('notes', '')
-    print(f"Comfort: {comfort}, Notes: {notes}")
 
     try:
         db = get_db()
         review_days = COMFORT_LEVELS[comfort]['review_days']
-        print(f"Review days: {review_days}")  # Add this
         db.log_attempt(problem_id, comfort, notes, review_days)
-        print("Attempt logged successfully")  # Add this
         return redirect('/')
     except Exception as e:
-        print(f"Error logging attempt: {str(e)}")  # Add this
         flash(f"Error logging attempt: {str(e)}")
         return redirect('/')
 
