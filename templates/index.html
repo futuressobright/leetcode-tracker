@@ -52,21 +52,20 @@
         </div>
     </div>
 
+
     {# Due Problems Section #}
     {% if due_problems %}
-    <section class="due-section">
-        <h2 class="section-header" onclick="toggleSection('due-problems')">
-            <span class="collapse-icon">▼</span>
-            Due for Review
-        </h2>
-        <div id="due-problems" class="section-content">
+    {# All Problems Section #}
+        <section class="all-problems">
+            <h2>Due for Review</h2>
+
+
             <div class="problems-grid">
                 {% for problem in due_problems %}
                     {% include "partials/problem_card.html" %}
                 {% endfor %}
             </div>
-        </div>
-    </section>
+        </section>
     {% endif %}
 
 
@@ -83,6 +82,21 @@
                 All Problems
             {% endif %}
         </h2>
+
+        {# Results count and no results message #}
+        <div class="results-info" style="margin-bottom: 20px; color: var(--text-secondary);">
+            {% if pagination.total > 0 %}
+                Found {{ pagination.total }} problem{% if pagination.total != 1 %}s{% endif %}
+                {% if search %} for "{{ search }}"{% endif %}
+                {% if request.args.get('never_attempted') == 'true' %} (never attempted){% endif %}
+                {% if list_filter %} in this list{% endif %}
+            {% else %}
+                {% if search or request.args.get('never_attempted') == 'true' or list_filter %}
+                    No problems found with current filters. <a href="/" style="color: var(--primary);">Clear all filters</a>
+                {% endif %}
+            {% endif %}
+        </div>
+
         <div class="problems-grid">
             {% for problem in all_problems %}
                 {# Using shared problem card template for consistency #}
