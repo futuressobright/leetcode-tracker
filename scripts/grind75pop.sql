@@ -1,8 +1,9 @@
--- Clear existing problems from List 4
-DELETE FROM problem_lists 
-WHERE list_id = (SELECT id FROM lists WHERE slot = 4);
+-- Clear Grind 75 (List 4)
+DELETE FROM problem_lists WHERE list_id IN (
+    SELECT id FROM lists WHERE slot = 4
+);
 
--- Insert Blind 75 + Grind 75 problems into List 4
+-- Populate Grind 75 (List 4)
 INSERT INTO problem_lists (problem_id, list_id)
 SELECT p.id, l.id
 FROM problems p
@@ -11,7 +12,7 @@ WHERE l.slot = 4
 AND p.leetcode_id IN (
     '1',    -- Two Sum
     '20',   -- Valid Parentheses
-    '21',   -- Merge Two Sorted Lists
+    '21',   -- Merge Two Sorted Lists 
     '121',  -- Best Time to Buy and Sell Stock
     '125',  -- Valid Palindrome
     '226',  -- Invert Binary Tree
@@ -42,7 +43,7 @@ AND p.leetcode_id IN (
     '133',  -- Clone Graph
     '150',  -- Evaluate Reverse Polish Notation
     '207',  -- Course Schedule
-    '208',  -- Implement Trie
+    '208',  -- Implement Trie (Prefix Tree)
     '322',  -- Coin Change
     '238',  -- Product of Array Except Self
     '155',  -- Min Stack

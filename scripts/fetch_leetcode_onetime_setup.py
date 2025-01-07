@@ -1,14 +1,11 @@
 import requests
-import json
 import sqlite3
 from datetime import datetime
-
 
 def fetch_leetcode_problems():
     """Fetch all problems from LeetCode GraphQL API"""
     url = 'https://leetcode.com/graphql'
-
-    # Updated query to match current LeetCode GraphQL schema
+    
     query = """
     query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
         problemsetQuestionList: questionList(
@@ -20,6 +17,7 @@ def fetch_leetcode_problems():
             total: totalNum
             questions: data {
                 questionId
+                questionFrontendId
                 title
                 titleSlug
                 difficulty
@@ -51,7 +49,7 @@ def fetch_leetcode_problems():
 
         print("Response status:", response.status_code)
         data = response.json()
-
+        
         if 'errors' in data:
             print("API Errors:", data['errors'])
             return 0
@@ -81,19 +79,25 @@ def fetch_leetcode_problems():
             all_problems.extend(batch)
             skip += limit
 
-        # Store in database
+        # Connect to existing database
+        print("Connecting to database...")
         with sqlite3.connect('leetcode.db') as conn:
             cursor = conn.cursor()
+            
+            # Clear existing problems
+            print("Clearing existing problems...")
+            cursor.execute("DELETE FROM problems")
+            
+            # Insert new problems
+            print("Inserting problems into database...")
             for problem in all_problems:
-                # Convert topic tags to comma-separated string
                 topics = ','.join(tag['name'] for tag in problem['topicTags'])
-
                 cursor.execute("""
-                    INSERT OR REPLACE INTO problems 
+                    INSERT INTO problems 
                     (leetcode_id, title, difficulty, topics)
                     VALUES (?, ?, ?, ?)
                 """, (
-                    problem['questionId'],
+                    problem['questionFrontendId'],
                     problem['title'],
                     problem['difficulty'],
                     topics
@@ -101,13 +105,13 @@ def fetch_leetcode_problems():
 
             conn.commit()
 
+        print(f"Successfully imported {len(all_problems)} problems from LeetCode")
         return len(all_problems)
 
     except Exception as e:
         print(f"Error occurred: {str(e)}")
         print(f"Full error details: {type(e).__name__}")
         return 0
-
 
 if __name__ == '__main__':
     print("Starting LeetCode problem fetch...")
