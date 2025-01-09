@@ -210,11 +210,16 @@ def rename_list(slot):
 def add_to_list(problem_id):
     try:
         list_name = request.form['list_name']
-        # Extract slot number from list name (e.g., "List 2" -> 2)
         slot = int(list_name.split()[-1]) if list_name != 'Quick50' else 1
 
         db = get_db()
         db.toggle_list(problem_id, slot)
+
+        # Get the current list from the referer URL
+        referer = request.headers.get('Referer')
+        if referer and 'list=' in referer:
+            list_param = referer.split('list=')[1].split('&')[0]
+            return redirect(f'/?list={list_param}')
         return redirect('/')
     except Exception as e:
         flash(f"Error modifying list: {str(e)}")
