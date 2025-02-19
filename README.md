@@ -1,3 +1,9 @@
+# START
+./start_leetcode_tracker.sh
+- This will persist until logout or reboot.
+- output to ./leetcode_tracker.log
+- ps aux | grep python
+
 # LeetCode Tracker
 
 A Flask web application to track your LeetCode problem-solving progress. Features include:
@@ -9,7 +15,7 @@ A Flask web application to track your LeetCode problem-solving progress. Feature
 ## Setup
 1. Clone the repository
 2. Install requirements: `pip install -r requirements.txt`
-3. Run `python app.py`
+3. ./start_leetcode_tracker.sh
 4. Access at http://localhost:5001
 
 ## Features

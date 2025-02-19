@@ -5,6 +5,7 @@ __pycache__/
 leetcode.db
 .DS_Store" > .gitignore
 *.log
+*.plist
 
 # Database
 *.db

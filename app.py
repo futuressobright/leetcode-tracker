@@ -4,6 +4,8 @@ from datetime import datetime, date
 from comfort_config import COMFORT_LEVELS
 import os
 from database import Database
+from dotenv import load_dotenv
+load_dotenv()  # take environment variables from .env
 
 app = Flask(__name__)
 app.jinja_env.auto_reload = True
@@ -228,3 +230,5 @@ def add_to_list(problem_id):
 if __name__ == '__main__':
     host = '0.0.0.0' if os.environ.get('ALLOW_REMOTE') else '127.0.0.1'
     app.run(debug=True, host=host, port=5001)
+
+
